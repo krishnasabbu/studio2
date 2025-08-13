@@ -21,10 +21,10 @@ export const useChatHistory = () => {
         const sessionsWithDates = parsedSessions.map((session: any) => ({
           ...session,
           timestamp: new Date(session.timestamp),
-          messages: session.messages.map((msg: any) => ({
+          messages: Array.isArray(session.messages) ? session.messages.map((msg: any) => ({
             ...msg,
             timestamp: new Date(msg.timestamp)
-          }))
+          })) : []
         }));
         setChatSessions(sessionsWithDates);
       }
