@@ -233,7 +233,7 @@ Let me know which type of template you'd like to create:
         timestamp: new Date()
       };
 
-      updateMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages([...messages, userMessage, botResponse]);
       
       // Call the optional callback
       onTemplateOnboard?.();
@@ -289,7 +289,7 @@ Which type of alert would you like to configure first?`,
         timestamp: new Date()
       };
 
-      updateMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages([...messages, userMessage, botResponse]);
       
       // Call the optional callback
       onAlertOnboard?.();
