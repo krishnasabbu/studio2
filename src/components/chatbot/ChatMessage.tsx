@@ -234,7 +234,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             message={message}
             onCopy={onCopy}
             onDownload={onDownload}
-        {message.content}
+            onThumbsUp={onThumbsUp}
+            onThumbsDown={onThumbsDown}
+            onSpeak={onSpeak}
+          />
+        )}
       </div>
     </div>
   );
