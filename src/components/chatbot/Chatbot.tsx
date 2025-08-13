@@ -134,7 +134,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
     } catch (error) {
       // Silently handle new chat errors
     }
-  }, [saveCurrentChat, messages, createNewChat]);
+  }, [messages, saveCurrentChat, createNewChat]);
 
   const handleSelectChat = useCallback((chatId: string) => {
     try {
@@ -174,7 +174,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
             timestamp: new Date()
           };
           
-          updateMessages(prev => [...prev, botResponse]);
+          updateMessages([...messages, userMessage, botResponse]);
         } catch (error) {
           // Silently handle bot response errors
         }
@@ -218,14 +218,14 @@ Let me know which type of template you'd like to create:
         timestamp: new Date()
       };
 
-      updateMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages([...messages, userMessage, botResponse]);
       
       // Call the optional callback
       onTemplateOnboard?.();
     } catch (error) {
       // Silently handle template onboard errors
     }
-  }, [onTemplateOnboard, updateMessages]);
+  }, [messages, updateMessages, onTemplateOnboard]);
 
   const handleAlertOnboard = useCallback(() => {
     try {
@@ -274,14 +274,14 @@ Which type of alert would you like to configure first?`,
         timestamp: new Date()
       };
 
-      updateMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages([...messages, userMessage, botResponse]);
       
       // Call the optional callback
       onAlertOnboard?.();
     } catch (error) {
       // Silently handle alert onboard errors
     }
-  }, [onAlertOnboard, updateMessages]);
+  }, [messages, updateMessages, onAlertOnboard]);
 
   return (
     <div className={`chatbot-container ${className}`}>
