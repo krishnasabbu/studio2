@@ -234,10 +234,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 relative">
+            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative">
               {/* Error Message Container */}
               <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600 dark:text-red-400">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
                   <span id="chat-error-message"></span>
                 </div>
               </div>
@@ -272,7 +272,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Chat Input */}
-            <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
               <ChatInput onSendMessage={onSendMessage} />
             </div>
           </motion.div>

@@ -176,7 +176,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
     <div className="p-4 bg-white dark:bg-gray-800">
       {/* Voice Recognition Error */}
       {voiceState.error && (
-        <div className="mb-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+        <div className="mb-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-sm text-red-600 dark:text-red-300">
           {voiceState.error}
         </div>
       )}
@@ -264,7 +264,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
             disabled={disabled || voiceState.isListening}
             className={`w-full px-4 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed ${
               voiceState.isListening ? 'bg-red-50 border-red-300' : 'bg-white'
-            }`}
+            } dark:bg-[#212121] dark:border-gray-600 dark:text-white dark:placeholder-gray-400`}
             rows={1}
             style={{ minHeight: '40px', maxHeight: '120px' }}
           />

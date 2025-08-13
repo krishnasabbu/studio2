@@ -61,12 +61,14 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, children, className }) 
             fontSize: '14px',
             lineHeight: '1.5',
             padding: '16px',
-            background: theme === 'dark' ? '#1a1a1a' : '#f8f8f8',
+            background: theme === 'dark' ? '#171717' : '#f8f8f8',
+            color: theme === 'dark' ? '#ffffff' : '#1f2937',
           }}
           codeTagProps={{
             style: {
               fontSize: '14px',
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+              color: theme === 'dark' ? '#ffffff' : '#1f2937',
             }
           }}
         >

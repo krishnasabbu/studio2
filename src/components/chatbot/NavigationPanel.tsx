@@ -80,20 +80,20 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="absolute left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-10 flex flex-col shadow-xl"
+            className="absolute left-0 top-0 h-full w-80 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600 z-10 flex flex-col shadow-xl"
             variants={panelVariants}
             initial="closed"
             animate="open"
             exit="closed"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Chat History
               </h2>
               <button
                 onClick={onToggle}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 aria-label="Close navigation panel"
               >
                 <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />

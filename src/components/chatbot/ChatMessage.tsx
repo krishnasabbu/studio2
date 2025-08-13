@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import mermaid from 'mermaid';
 import MessageActions from './MessageActions';
 import CodeBlock from './CodeBlock';
+import { useTheme } from '../../hooks/useTheme';
 import { Message, FileAttachment } from './types';
 
 interface ChatMessageProps {
@@ -42,62 +43,104 @@ const FilePreview: React.FC<{ attachment: FileAttachment }> = ({ attachment }) =
 
 const MermaidDiagram: React.FC<{ chart: string }> = ({ chart }) => {
   const elementRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (elementRef.current) {
       const renderChart = async () => {
         try {
-          // Clear any previous content
-          if (elementRef.current) {
-            elementRef.current.innerHTML = '';
-          }
+          // Clear previous content
+          elementRef.current.innerHTML = '';
           
-          // Initialize Mermaid with proper configuration
-          mermaid.initialize({ 
+          // Configure Mermaid with theme-aware settings
+          const config = {
             startOnLoad: false,
-            theme: 'neutral',
+            theme: theme === 'dark' ? 'dark' : 'neutral',
             securityLevel: 'loose',
-            fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
-            fontSize: 14,
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            fontSize: 16,
+            darkMode: theme === 'dark',
             flowchart: {
               useMaxWidth: true,
-              htmlLabels: true
+              htmlLabels: true,
+              curve: 'basis'
+            },
+            themeVariables: theme === 'dark' ? {
+              primaryColor: '#4f46e5',
+              primaryTextColor: '#ffffff',
+              primaryBorderColor: '#6366f1',
+              lineColor: '#9ca3af',
+              sectionBkgColor: '#374151',
+              altSectionBkgColor: '#4b5563',
+              gridColor: '#6b7280',
+              secondaryColor: '#1f2937',
+              tertiaryColor: '#111827'
+            } : {
+              primaryColor: '#4f46e5',
+              primaryTextColor: '#1f2937',
+              primaryBorderColor: '#6366f1',
+              lineColor: '#374151',
+              sectionBkgColor: '#f3f4f6',
+              altSectionBkgColor: '#e5e7eb',
+              gridColor: '#9ca3af',
+              secondaryColor: '#ffffff',
+              tertiaryColor: '#f9fafb'
             }
-          });
+          };
+          
+          // Initialize Mermaid with configuration
+          mermaid.initialize(config);
           
           // Generate unique ID for each diagram
           const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           
-          // Render the diagram
-          const { svg } = await mermaid.render(diagramId, chart);
+          // Validate and clean the chart syntax
+          const cleanChart = chart.trim();
+          if (!cleanChart) {
+            throw new Error('Empty chart content');
+          }
+          
+          // Render the diagram with error handling
+          const { svg } = await mermaid.render(diagramId, cleanChart);
           
           if (elementRef.current) {
             elementRef.current.innerHTML = svg;
             
-            // Apply responsive styling to the SVG
+            // Apply responsive and theme-aware styling
             const svgElement = elementRef.current.querySelector('svg');
             if (svgElement) {
               svgElement.style.maxWidth = '100%';
               svgElement.style.height = 'auto';
+              svgElement.style.display = 'block';
+              svgElement.style.margin = '0 auto';
+              
+              // Apply theme-specific styling
+              if (theme === 'dark') {
+                svgElement.style.filter = 'brightness(0.9)';
+              }
             }
           }
         } catch (error) {
-          // Silently handle Mermaid errors - render nothing
           console.warn('Mermaid rendering failed:', error);
           if (elementRef.current) {
-            elementRef.current.innerHTML = '';
+            // Show a fallback message for debugging
+            elementRef.current.innerHTML = `
+              <div class="text-sm text-gray-500 dark:text-gray-400 italic p-4 text-center">
+                Diagram could not be rendered
+              </div>
+            `;
           }
         }
       };
 
       renderChart();
     }
-  }, [chart]);
+  }, [chart, theme]);
 
   return (
     <div 
       ref={elementRef} 
-      className="my-4 flex justify-center overflow-x-auto bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700" 
+      className="my-4 flex justify-center overflow-x-auto bg-white dark:bg-[#212121] rounded-lg p-4 border border-gray-200 dark:border-gray-600" 
     />
   );
 };
