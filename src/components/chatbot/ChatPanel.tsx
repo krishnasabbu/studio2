@@ -257,11 +257,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     {/* Chat Content Container with proper max-width and centering */}
                     <div className="max-w-4xl mx-auto p-6">
                       <div id="chat-error-container" className="hidden mb-4 z-10">
-                    <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
-                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
-                        <span id="chat-error-message"></span>
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
+                          <span id="chat-error-message"></span>
+                        </div>
                       </div>
-                    </div>
                     
                       {messages.map((message) => (
                         <ChatMessage 
