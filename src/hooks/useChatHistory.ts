@@ -118,6 +118,13 @@ export const useChatHistory = () => {
   }, [currentChatId, createNewChat]);
 
   const updateMessages = useCallback((newMessages: Message[]) => {
+    // Runtime check to ensure newMessages is an array
+    if (!Array.isArray(newMessages)) {
+      console.error('updateMessages: newMessages is not an array:', newMessages);
+      setMessages([]);
+      return () => {};
+    }
+    
     setMessages(newMessages);
     // Auto-save after a delay to avoid too frequent saves
     const timeoutId = setTimeout(() => {
