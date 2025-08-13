@@ -78,7 +78,7 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
 
       {/* Navigation Panel */}
       <AnimatePresence>
-        {(isOpen || true) && ( {/* Always render when used in maximized mode */}
+        {isOpen && (
           <motion.div
             className={`${isOpen ? 'absolute left-0 top-0 h-full shadow-xl z-10' : 'h-full'} w-80 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600 flex flex-col`}
             variants={panelVariants}
