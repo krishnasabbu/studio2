@@ -61,19 +61,74 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, children, className }) 
             fontSize: '14px',
             lineHeight: '1.5',
             padding: '16px',
-            background: theme === 'dark' ? '#171717' : '#f8f8f8',
+            background: theme === 'dark' ? '#171717 !important' : '#f8f8f8 !important',
             color: theme === 'dark' ? '#ffffff' : '#1f2937',
           }}
           codeTagProps={{
             style: {
               fontSize: '14px',
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-              color: theme === 'dark' ? '#ffffff' : '#1f2937',
+              color: theme === 'dark' ? '#ffffff !important' : '#1f2937 !important',
+              background: 'transparent !important',
             }
           }}
+          wrapLongLines={true}
         >
           {children.replace(/\n$/, '')}
         </SyntaxHighlighter>
+        
+        {/* Additional dark theme override */}
+        {theme === 'dark' && (
+          <style jsx>{`
+            .token.comment,
+            .token.prolog,
+            .token.doctype,
+            .token.cdata {
+              color: #6a9955 !important;
+            }
+            .token.punctuation {
+              color: #d4d4d4 !important;
+            }
+            .token.property,
+            .token.tag,
+            .token.boolean,
+            .token.number,
+            .token.constant,
+            .token.symbol,
+            .token.deleted {
+              color: #b5cea8 !important;
+            }
+            .token.selector,
+            .token.attr-name,
+            .token.string,
+            .token.char,
+            .token.builtin,
+            .token.inserted {
+              color: #ce9178 !important;
+            }
+            .token.operator,
+            .token.entity,
+            .token.url,
+            .language-css .token.string,
+            .style .token.string {
+              color: #d4d4d4 !important;
+            }
+            .token.atrule,
+            .token.attr-value,
+            .token.keyword {
+              color: #569cd6 !important;
+            }
+            .token.function,
+            .token.class-name {
+              color: #dcdcaa !important;
+            }
+            .token.regex,
+            .token.important,
+            .token.variable {
+              color: #d16969 !important;
+            }
+          `}</style>
+        )}
       </div>
     </div>
   );

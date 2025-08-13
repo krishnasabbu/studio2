@@ -164,17 +164,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             ref={panelRef}
             className={`fixed bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden ${
               isMaximized
-                ? ''
+                ? 'inset-0 rounded-none'
                 : 'bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] lg:max-w-lg xl:w-[580px]'
             }`}
-            style={isMaximized ? { 
-              width: '90vw', 
-              height: '90vh', 
-              top: '5vh', 
-              left: '5vw', 
-              right: 'auto', 
-              bottom: 'auto' 
-            } : {}}
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -184,97 +176,198 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             aria-label="Chat assistant"
             aria-modal="true"
           >
-            {/* Navigation Panel - Inside Chat Container */}
-            <NavigationPanel
-              isOpen={isNavOpen}
-              onToggle={toggleNavigation}
-              onNewChat={onNewChat}
-              chatSessions={chatSessions}
-              currentChatId={currentChatId}
-              onSelectChat={onSelectChat}
-            />
-
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
-              <div className="flex items-center space-x-3">
-                {/* Navigation Toggle Button */}
-                <button
-                  onClick={toggleNavigation}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  aria-label="Toggle navigation panel"
-                >
-                  <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">AI</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <ThemeToggle />
-                <button
-                  onClick={onToggleMaximize}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  aria-label={isMaximized ? "Restore chat size" : "Maximize chat"}
-                >
-                  <Maximize2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                </button>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  aria-label="Close chat"
-                >
-                  <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                </button>
-              </div>
-            </div>
-
-            {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative">
-              {/* Error Message Container */}
-              <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
-                  <span id="chat-error-message"></span>
-                </div>
-              </div>
-              
-              {messages.map((message) => (
-                <ChatMessage 
-                  key={message.id} 
-                  message={message}
-                  onCopy={handleCopy}
-                  onDownload={handleDownload}
-                  onThumbsUp={handleThumbsUp}
-                  onThumbsDown={handleThumbsDown}
-                  onSpeak={handleSpeak}
-                />
-              ))}
-              
-              {/* Action buttons after greeting */}
-              {showActionButtons && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.3 }}
-                >
-                  <ActionButtons
-                    onTemplateOnboard={onTemplateOnboard}
-                    onAlertOnboard={onAlertOnboard}
+            {/* ChatGPT-like Layout when Maximized */}
+            {isMaximized ? (
+              <div className="flex h-full bg-white dark:bg-[#212121]">
+                {/* Left Navigation Panel - Always Visible when Maximized */}
+                <div className="w-80 flex-shrink-0 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600">
+                  <NavigationPanel
+                    isOpen={true}
+                    onToggle={() => {}}
+                    onNewChat={onNewChat}
+                    chatSessions={chatSessions}
+                    currentChatId={currentChatId}
+                    onSelectChat={onSelectChat}
                   />
-                </motion.div>
-              )}
-              
-              <div ref={messagesEndRef} />
-            </div>
+                </div>
+                
+                {/* Center Chat Area */}
+                <div className="flex-1 flex flex-col max-w-4xl mx-auto">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">AI</span>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <ThemeToggle />
+                      <button
+                        onClick={onToggleMaximize}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        aria-label="Restore chat size"
+                      >
+                        <Maximize2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      </button>
+                      <button
+                        onClick={onClose}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        aria-label="Close chat"
+                      >
+                        <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      </button>
+                    </div>
+                  </div>
 
-            {/* Chat Input */}
-            <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
-              <ChatInput onSendMessage={onSendMessage} />
-            </div>
+                  {/* Messages area */}
+                  <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-[#212121] relative">
+                    {/* Error Message Container */}
+                    <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
+                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
+                        <span id="chat-error-message"></span>
+                      </div>
+                    </div>
+                    
+                    {messages.map((message) => (
+                      <ChatMessage 
+                        key={message.id} 
+                        message={message}
+                        onCopy={handleCopy}
+                        onDownload={handleDownload}
+                        onThumbsUp={handleThumbsUp}
+                        onThumbsDown={handleThumbsDown}
+                        onSpeak={handleSpeak}
+                      />
+                    ))}
+                    
+                    {/* Action buttons after greeting */}
+                    {showActionButtons && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.3 }}
+                      >
+                        <ActionButtons
+                          onTemplateOnboard={onTemplateOnboard}
+                          onAlertOnboard={onAlertOnboard}
+                        />
+                      </motion.div>
+                    )}
+                    
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Chat Input */}
+                  <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
+                    <ChatInput onSendMessage={onSendMessage} />
+                  </div>
+                </div>
+                
+                {/* Right Empty Space for Balance */}
+                <div className="w-80 flex-shrink-0 bg-white dark:bg-[#212121]">
+                  {/* Intentionally empty for visual balance */}
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Navigation Panel - Inside Chat Container for Non-Maximized */}
+                <NavigationPanel
+                  isOpen={isNavOpen}
+                  onToggle={toggleNavigation}
+                  onNewChat={onNewChat}
+                  chatSessions={chatSessions}
+                  currentChatId={currentChatId}
+                  onSelectChat={onSelectChat}
+                />
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
+                  <div className="flex items-center space-x-3">
+                    {/* Navigation Toggle Button */}
+                    <button
+                      onClick={toggleNavigation}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      aria-label="Toggle navigation panel"
+                    >
+                      <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">AI</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <ThemeToggle />
+                    <button
+                      onClick={onToggleMaximize}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      aria-label="Maximize chat"
+                    >
+                      <Maximize2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    <button
+                      onClick={onClose}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      aria-label="Close chat"
+                    >
+                      <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Messages area */}
+                <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative">
+                  {/* Error Message Container */}
+                  <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
+                      <span id="chat-error-message"></span>
+                    </div>
+                  </div>
+                  
+                  {messages.map((message) => (
+                    <ChatMessage 
+                      key={message.id} 
+                      message={message}
+                      onCopy={handleCopy}
+                      onDownload={handleDownload}
+                      onThumbsUp={handleThumbsUp}
+                      onThumbsDown={handleThumbsDown}
+                      onSpeak={handleSpeak}
+                    />
+                  ))}
+                  
+                  {/* Action buttons after greeting */}
+                  {showActionButtons && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5, duration: 0.3 }}
+                    >
+                      <ActionButtons
+                        onTemplateOnboard={onTemplateOnboard}
+                        onAlertOnboard={onAlertOnboard}
+                      />
+                    </motion.div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Chat Input */}
+                <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
+                  <ChatInput onSendMessage={onSendMessage} />
+                </div>
+              </>
+            )}
           </motion.div>
         </>
       )}

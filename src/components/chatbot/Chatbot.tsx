@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import ChatbotLauncher from './ChatbotLauncher';
 import ChatPanel from './ChatPanel';
 import NavigationPanel from './NavigationPanel';
+import { useChatHistory } from '../../hooks/useChatHistory';
 import { Message, ChatbotProps, ChatPanelState, FileAttachment, ChatSession } from './types';
 
 const Chatbot: React.FC<ChatbotProps> = ({
@@ -13,12 +14,20 @@ const Chatbot: React.FC<ChatbotProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const [panelState, setPanelState] = useState<ChatPanelState>('closed');
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string>('default');
+  
+  // Use chat history hook
+  const {
+    chatSessions,
+    currentChatId,
+    messages,
+    createNewChat,
+    selectChat,
+    updateMessages,
+    saveCurrentChat
+  } = useChatHistory();
 
   // Initialize greeting message on first visit
   useEffect(() => {
@@ -75,7 +84,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
         // Silently handle any initialization errors
       }
     }
-  }, [isOpen, isFirstVisit, messages.length]);
+  }, [isOpen, isFirstVisit, messages.length, updateMessages]);
 
   // Handle panel state transitions
   useEffect(() => {
@@ -117,29 +126,14 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
 
   const handleNewChat = useCallback(() => {
     try {
-      // Save current chat session if it has messages
-      if (messages.length > 1) { // More than just greeting
-        const newSession: ChatSession = {
-          id: currentChatId,
-          title: messages[1]?.content.slice(0, 50) + '...' || 'New Chat',
-          timestamp: new Date(),
-          preview: messages[1]?.content.slice(0, 100) + '...' || '',
-          messages: [...messages]
-        };
-        
-        setChatSessions(prev => [newSession, ...prev]);
-      }
-
-      // Start new chat
-      const newChatId = 'chat-' + Date.now();
-      setCurrentChatId(newChatId);
-      setMessages([]);
+      // Save current chat and create new one
+      saveCurrentChat(messages);
+      createNewChat();
       setIsFirstVisit(true);
       setIsNavOpen(false);
     } catch (error) {
       // Silently handle new chat errors
     }
-  }, [messages, currentChatId]);
 
   const handleSelectChat = useCallback((chatId: string) => {
     try {
@@ -147,6 +141,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
       if (session) {
         setCurrentChatId(chatId);
         setMessages(session.messages);
+        updateMessages([greetingMessage, sampleMessage]);
         setIsFirstVisit(false);
         setIsNavOpen(false);
       }
@@ -287,7 +282,7 @@ Which type of alert would you like to configure first?`,
     } catch (error) {
       // Silently handle alert onboard errors
     }
-  }, [onAlertOnboard]);
+  }, [messages, updateMessages, onAlertOnboard]);
 
   return (
     <div className={`chatbot-container ${className}`}>
