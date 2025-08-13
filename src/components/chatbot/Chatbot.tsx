@@ -136,7 +136,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
           messages: [...messages]
         };
         
-        saveCurrentChat(newSession);
+        saveCurrentChat(newSession.messages);
       }
 
       // Start new chat
