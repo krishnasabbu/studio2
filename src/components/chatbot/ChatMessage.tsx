@@ -59,9 +59,9 @@ const MermaidDiagram: React.FC<{ chart: string }> = ({ chart }) => {
             elementRef.current.innerHTML = svg;
           }
         } catch (error) {
-          console.error('Mermaid rendering error:', error);
+          // Silently handle Mermaid errors - don't render anything
           if (elementRef.current) {
-            elementRef.current.innerHTML = `<pre class="text-red-500 text-sm">Error rendering diagram: ${error}</pre>`;
+            elementRef.current.innerHTML = '';
           }
         }
       };
@@ -174,11 +174,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             onSpeak={onSpeak}
           />
         )}
-        
-        {/* Timestamp */}
-        <div className={`text-xs text-gray-400 mt-2 ${isBot ? 'text-left' : 'text-right'}`}>
-          {formatTime(message.timestamp)}
-        </div>
       </div>
     </div>
   );

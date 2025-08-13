@@ -19,6 +19,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
   // Initialize greeting message on first visit
   useEffect(() => {
     if (isOpen && isFirstVisit && messages.length === 0) {
+      try {
       const greetingMessage: Message = {
         id: 'greeting-' + Date.now(),
         content: '👋 Hi! How can I help you today?',
@@ -66,6 +67,9 @@ This demonstrates the recursive nature of the Fibonacci algorithm. The function 
       
       setMessages([greetingMessage, sampleMessage]);
       setIsFirstVisit(false);
+      } catch (error) {
+        // Silently handle any initialization errors
+      }
     }
   }, [isOpen, isFirstVisit, messages.length]);
 
@@ -102,45 +106,54 @@ This demonstrates the recursive nature of the Fibonacci algorithm. The function 
   const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
 
-    // Add user message
-    const userMessage: Message = {
-      id: 'user-' + Date.now(),
-      content: content || '📎 File attachment',
-      sender: 'user',
-      timestamp: new Date(),
-      attachments: attachments
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-
-    // Simulate bot response after a delay
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: 'bot-' + Date.now(),
-        content: `Thanks for your message! ${attachments && attachments.length > 0 ? `I can see you've shared ${attachments.length} file(s). ` : ''}How can I help you further?`,
-        sender: 'bot',
-        timestamp: new Date()
+    try {
+      // Add user message
+      const userMessage: Message = {
+        id: 'user-' + Date.now(),
+        content: content || '📎 File attachment',
+        sender: 'user',
+        timestamp: new Date(),
+        attachments: attachments
       };
-      
-      setMessages(prev => [...prev, botResponse]);
-    }, 1000);
+
+      setMessages(prev => [...prev, userMessage]);
+
+      // Simulate bot response after a delay
+      setTimeout(() => {
+        try {
+          const botResponse: Message = {
+            id: 'bot-' + Date.now(),
+            content: `Thanks for your message! ${attachments && attachments.length > 0 ? `I can see you've shared ${attachments.length} file(s). ` : ''}How can I help you further?`,
+            sender: 'bot',
+            timestamp: new Date()
+          };
+          
+          setMessages(prev => [...prev, botResponse]);
+        } catch (error) {
+          // Silently handle bot response errors
+        }
+      }, 1000);
+    } catch (error) {
+      // Silently handle message sending errors
+    }
   }, []);
 
   const handleTemplateOnboard = useCallback(() => {
-    console.log('Template Onboard clicked');
-    
-    // Add user message
-    const userMessage: Message = {
-      id: 'user-template-' + Date.now(),
-      content: 'I want to start template onboarding',
-      sender: 'user',
-      timestamp: new Date()
-    };
+    try {
+      console.log('Template Onboard clicked');
+      
+      // Add user message
+      const userMessage: Message = {
+        id: 'user-template-' + Date.now(),
+        content: 'I want to start template onboarding',
+        sender: 'user',
+        timestamp: new Date()
+      };
 
-    // Add bot response
-    const botResponse: Message = {
-      id: 'bot-template-' + Date.now() + 1,
-      content: `Great! I'll help you with **template onboarding**. Here's what we'll cover:
+      // Add bot response
+      const botResponse: Message = {
+        id: 'bot-template-' + Date.now() + 1,
+        content: `Great! I'll help you with **template onboarding**. Here's what we'll cover:
 
 ## Template Onboarding Process
 
@@ -155,31 +168,35 @@ Let me know which type of template you'd like to create:
 - SMS templates
 
 *This is a demo response. In production, this would connect to your actual onboarding flow.*`,
-      sender: 'bot',
-      timestamp: new Date()
-    };
+        sender: 'bot',
+        timestamp: new Date()
+      };
 
-    setMessages(prev => [...prev, userMessage, botResponse]);
-    
-    // Call the optional callback
-    onTemplateOnboard?.();
+      setMessages(prev => [...prev, userMessage, botResponse]);
+      
+      // Call the optional callback
+      onTemplateOnboard?.();
+    } catch (error) {
+      // Silently handle template onboard errors
+    }
   }, [onTemplateOnboard]);
 
   const handleAlertOnboard = useCallback(() => {
-    console.log('Alert Onboard clicked');
-    
-    // Add user message
-    const userMessage: Message = {
-      id: 'user-alert-' + Date.now(),
-      content: 'I want to start alert onboarding',
-      sender: 'user',
-      timestamp: new Date()
-    };
+    try {
+      console.log('Alert Onboard clicked');
+      
+      // Add user message
+      const userMessage: Message = {
+        id: 'user-alert-' + Date.now(),
+        content: 'I want to start alert onboarding',
+        sender: 'user',
+        timestamp: new Date()
+      };
 
-    // Add bot response
-    const botResponse: Message = {
-      id: 'bot-alert-' + Date.now() + 1,
-      content: `Perfect! Let's get you set up with **alert onboarding**. Here's our step-by-step process:
+      // Add bot response
+      const botResponse: Message = {
+        id: 'bot-alert-' + Date.now() + 1,
+        content: `Perfect! Let's get you set up with **alert onboarding**. Here's our step-by-step process:
 
 ## Alert Configuration Steps
 
@@ -207,14 +224,17 @@ Choose from:
 > **Note:** This demo shows the onboarding flow structure. In production, this would integrate with your JIRA system and actual alert management platform.
 
 Which type of alert would you like to configure first?`,
-      sender: 'bot',
-      timestamp: new Date()
-    };
+        sender: 'bot',
+        timestamp: new Date()
+      };
 
-    setMessages(prev => [...prev, userMessage, botResponse]);
-    
-    // Call the optional callback
-    onAlertOnboard?.();
+      setMessages(prev => [...prev, userMessage, botResponse]);
+      
+      // Call the optional callback
+      onAlertOnboard?.();
+    } catch (error) {
+      // Silently handle alert onboard errors
+    }
   }, [onAlertOnboard]);
 
   return (

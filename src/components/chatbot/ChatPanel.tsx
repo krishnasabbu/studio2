@@ -153,7 +153,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 ? 'inset-4 w-auto h-auto'
                 : 'bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] lg:max-w-lg xl:w-[580px]'
             }`}
-            style={isMaximized ? { width: '75vw', height: '75vh', top: '12.5vh', left: '12.5vw', right: 'auto', bottom: 'auto' } : {}}
+            style={isMaximized ? { width: '90vw', height: '90vh', top: '5vh', left: '5vw', right: 'auto', bottom: 'auto' } : {}}
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -182,13 +182,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   aria-label={isMaximized ? "Restore chat size" : "Maximize chat"}
                 >
                   <Maximize2 className="w-4 h-4 text-gray-600" />
-                </button>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  aria-label="Minimize chat"
-                >
-                  <Minimize2 className="w-4 h-4 text-gray-600" />
                 </button>
                 <button
                   onClick={onClose}
