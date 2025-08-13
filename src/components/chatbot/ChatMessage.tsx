@@ -210,11 +210,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 ),
               }}
             >
-              {isBot ? (
-                message.content
-              ) : (
-                <span className="chat-text-base">{message.content}</span>
-              )}
+              {String(message.content || '')}
             </ReactMarkdown>
           </div>
           

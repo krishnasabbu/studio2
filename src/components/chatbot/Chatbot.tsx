@@ -78,7 +78,10 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
         type: 'text'
       };
       
-      updateMessages([greetingMessage, sampleMessage]);
+      const initialMessages = [greetingMessage, sampleMessage];
+      if (Array.isArray(initialMessages)) {
+        updateMessages(initialMessages);
+      }
       setIsFirstVisit(false);
       } catch (error) {
         // Silently handle any initialization errors
