@@ -184,26 +184,26 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     </code>
                   );
                 },
-                p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
-                ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
-                li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed chat-text-base">{children}</p>,
+                ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1 chat-text-base">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1 chat-text-base">{children}</ol>,
+                li: ({ children }) => <li className="leading-relaxed chat-text-base">{children}</li>,
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic mb-3 text-gray-600 dark:text-gray-400">
+                  <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic mb-3 text-gray-600 dark:text-gray-400 chat-text-base">
                     {children}
                   </blockquote>
                 ),
-                h1: ({ children }) => <h1 className="text-xl font-bold mb-2 mt-4 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h3>,
-                strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-gray-100">{children}</strong>,
+                h1: ({ children }) => <h1 className="text-xl font-bold mb-2 mt-4 first:mt-0 text-gray-900 dark:text-gray-100 chat-heading">{children}</h1>,
+                h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100 chat-heading">{children}</h2>,
+                h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100 chat-heading">{children}</h3>,
+                strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-gray-100 chat-text-base">{children}</strong>,
                 em: ({ children }) => <em className="italic">{children}</em>,
                 a: ({ children, href }) => (
                   <a 
                     href={href} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 underline hover:no-underline"
+                    className="text-blue-600 dark:text-blue-400 underline hover:no-underline chat-text-base"
                   >
                     {children}
                   </a>

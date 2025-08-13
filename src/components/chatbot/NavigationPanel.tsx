@@ -88,7 +88,7 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="chat-heading chat-text-base text-gray-900 dark:text-white">
                 Chat History
               </h2>
               <button
@@ -104,7 +104,7 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
             <div className="p-4">
               <button
                 onClick={onNewChat}
-                className="w-full flex items-center space-x-3 px-4 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full flex items-center space-x-3 px-4 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 chat-text-base"
               >
                 <Plus className="w-5 h-5" />
                 <span className="font-medium">New Chat</span>
@@ -117,8 +117,8 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
                 {chatSessions.length === 0 ? (
                   <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                     <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">No chat history yet</p>
-                    <p className="text-xs mt-1">Start a new conversation to see it here</p>
+                    <p className="chat-text-sm">No chat history yet</p>
+                    <p className="chat-text-xs mt-1">Start a new conversation to see it here</p>
                   </div>
                 ) : (
                   chatSessions.map((session) => (
@@ -134,13 +134,13 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
                       <div className="flex items-start space-x-3">
                         <MessageSquare className="w-4 h-4 mt-1 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          <h3 className="chat-text-sm font-medium text-gray-900 dark:text-white truncate">
                             {session.title}
                           </h3>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                          <p className="chat-text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                             {session.preview}
                           </p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                          <p className="chat-text-xs text-gray-400 dark:text-gray-500 mt-2">
                             {formatTime(session.timestamp)}
                           </p>
                         </div>

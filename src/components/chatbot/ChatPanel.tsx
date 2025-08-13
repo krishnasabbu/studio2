@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Maximize2, Menu } from 'lucide-react';
+import { X, Maximize2, Menu, ChevronDown } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ActionButtons from './ActionButtons';
@@ -45,6 +45,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollButton, setShowScrollButton] = React.useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,6 +57,21 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       setTimeout(scrollToBottom, 100);
     }
   }, [messages, isOpen]);
+
+  // Handle scroll detection for scroll-to-bottom button
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isNearBottom && messages.length > 3);
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [messages.length]);
 
   // Handle escape key
   useEffect(() => {
@@ -220,8 +237,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                         <span className="text-white font-semibold text-sm">AI</span>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
+                        <h3 className="chat-heading chat-text-base text-gray-900 dark:text-white">Assistant</h3>
+                        <p className="chat-text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
                       </div>
                     </div>
                     
@@ -253,11 +270,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   </div>
 
                   {/* Messages area */}
-                  <div className="flex-1 overflow-y-auto bg-white dark:bg-[#212121] relative">
+                  <div 
+                    ref={messagesContainerRef}
+                    className="flex-1 overflow-y-auto bg-white dark:bg-[#212121] relative"
+                    style={{ scrollbarGutter: 'stable' }}
+                  >
                     {/* Chat Content Container with proper max-width and centering */}
                     <div className="max-w-4xl mx-auto p-6">
                       <div id="chat-error-container" className="hidden mb-4 z-10">
-                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 chat-text-sm text-red-600 dark:text-red-300">
                           <span id="chat-error-message"></span>
                         </div>
                       </div>
@@ -290,6 +311,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                       
                       <div ref={messagesEndRef} />
                     </div>
+                    
+                    {/* Scroll to Bottom Button */}
+                    {showScrollButton && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        onClick={scrollToBottom}
+                        className="scroll-to-bottom"
+                        aria-label="Scroll to bottom"
+                      >
+                        <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      </motion.button>
+                    )}
                   </div>
 
                   {/* Chat Input */}
@@ -327,8 +362,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                       <span className="text-white font-semibold text-sm">AI</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
+                      <h3 className="chat-heading chat-text-base text-gray-900 dark:text-white">Assistant</h3>
+                      <p className="chat-text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
                     </div>
                   </div>
                   
@@ -356,10 +391,14 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
 
                 {/* Messages area */}
-                <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative" style={{ scrollbarGutter: 'stable' }}>
+                <div 
+                  ref={messagesContainerRef}
+                  className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative" 
+                  style={{ scrollbarGutter: 'stable' }}
+                >
                   {/* Error Message Container */}
                   <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 chat-text-sm text-red-600 dark:text-red-300">
                       <span id="chat-error-message"></span>
                     </div>
                   </div>
@@ -391,6 +430,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   )}
                   
                   <div ref={messagesEndRef} />
+                  
+                  {/* Scroll to Bottom Button */}
+                  {showScrollButton && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={scrollToBottom}
+                      className="scroll-to-bottom"
+                      aria-label="Scroll to bottom"
+                    >
+                      <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    </motion.button>
+                  )}
                 </div>
 
                 {/* Chat Input */}
