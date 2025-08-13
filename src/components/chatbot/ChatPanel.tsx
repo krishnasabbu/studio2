@@ -178,12 +178,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           >
             {/* ChatGPT-like Layout when Maximized */}
             {isMaximized ? (
-              <div className="flex h-full bg-white dark:bg-[#212121]">
+              <div className="flex h-full bg-white dark:bg-[#212121] relative">
                 {/* Left Navigation Panel - Always Visible when Maximized */}
-                <div className="w-80 flex-shrink-0 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600">
+                <div className={`${isNavOpen ? 'w-80' : 'w-0'} transition-all duration-300 flex-shrink-0 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600 overflow-hidden`}>
                   <NavigationPanel
-                    isOpen={true}
-                    onToggle={() => {}}
+                    isOpen={isNavOpen}
+                    onToggle={toggleNavigation}
                     onNewChat={onNewChat}
                     chatSessions={chatSessions}
                     currentChatId={currentChatId}
@@ -191,10 +191,30 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   />
                 </div>
                 
+                {/* Navigation Toggle Button for Maximized Mode */}
+                {!isNavOpen && (
+                  <button
+                    onClick={toggleNavigation}
+                    className="absolute top-4 left-4 z-20 p-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg shadow-md border border-gray-200 dark:border-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    aria-label="Open navigation panel"
+                  >
+                    <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                )}
+                
                 {/* Center Chat Area */}
-                <div className="flex-1 flex flex-col max-w-4xl mx-auto">
+                <div className="flex-1 flex flex-col">
                   {/* Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121] w-full">
+                  <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121] w-full">
+                    {/* Navigation Toggle for Maximized Mode */}
+                    <button
+                      onClick={toggleNavigation}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 mr-3"
+                      aria-label="Toggle navigation panel"
+                    >
+                      <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    </button>
+                    
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-semibold text-sm">AI</span>
@@ -205,7 +225,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2 ml-auto">
+                    {/* Spacer to push icons to the right */}
+                    <div className="flex-1"></div>
+                    
+                    {/* Control Icons - Always Right Aligned */}
+                    {/* Spacer to push icons to the right */}
+                    <div className="flex-1"></div>
+                    
+                    {/* Control Icons - Always Right Aligned */}
+                    <div className="flex items-center space-x-2 flex-shrink-0">
                       <ThemeToggle />
                       <button
                         onClick={onToggleMaximize}
@@ -225,52 +253,52 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   </div>
 
                   {/* Messages area */}
-                  <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-[#212121] relative">
-                    {/* Error Message Container */}
+                  <div className="flex-1 overflow-y-auto bg-white dark:bg-[#212121] relative">
+                    {/* Chat Content Container with proper max-width and centering */}
+                    <div className="max-w-4xl mx-auto p-6">
+                      <div id="chat-error-container" className="hidden mb-4 z-10">
                     <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
                       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
                         <span id="chat-error-message"></span>
                       </div>
                     </div>
                     
-                    {messages.map((message) => (
-                      <ChatMessage 
-                        key={message.id} 
-                        message={message}
-                        onCopy={handleCopy}
-                        onDownload={handleDownload}
-                        onThumbsUp={handleThumbsUp}
-                        onThumbsDown={handleThumbsDown}
-                        onSpeak={handleSpeak}
-                      />
-                    ))}
-                    
-                    {/* Action buttons after greeting */}
-                    {showActionButtons && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.3 }}
-                      >
-                        <ActionButtons
-                          onTemplateOnboard={onTemplateOnboard}
-                          onAlertOnboard={onAlertOnboard}
+                      {messages.map((message) => (
+                        <ChatMessage 
+                          key={message.id} 
+                          message={message}
+                          onCopy={handleCopy}
+                          onDownload={handleDownload}
+                          onThumbsUp={handleThumbsUp}
+                          onThumbsDown={handleThumbsDown}
+                          onSpeak={handleSpeak}
                         />
-                      </motion.div>
-                    )}
-                    
-                    <div ref={messagesEndRef} />
+                      ))}
+                      
+                      {/* Action buttons after greeting */}
+                      {showActionButtons && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5, duration: 0.3 }}
+                        >
+                          <ActionButtons
+                            onTemplateOnboard={onTemplateOnboard}
+                            onAlertOnboard={onAlertOnboard}
+                          />
+                        </motion.div>
+                      )}
+                      
+                      <div ref={messagesEndRef} />
+                    </div>
                   </div>
 
                   {/* Chat Input */}
-                  <div className="bg-white dark:bg-[#212121]">
-                    <ChatInput onSendMessage={onSendMessage} />
+                  <div className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700">
+                    <div className="max-w-4xl mx-auto">
+                      <ChatInput onSendMessage={onSendMessage} />
+                    </div>
                   </div>
-                </div>
-                
-                {/* Right Empty Space for Balance */}
-                <div className="w-80 flex-shrink-0 bg-white dark:bg-[#212121]">
-                  {/* Intentionally empty for visual balance */}
                 </div>
               </div>
             ) : (
@@ -286,7 +314,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 />
 
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
+                <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
                   <div className="flex items-center space-x-3">
                     {/* Navigation Toggle Button */}
                     <button
@@ -305,7 +333,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
+                  {/* Spacer to push icons to the right */}
+                  <div className="flex-1"></div>
+                  
+                  {/* Control Icons - Always Right Aligned */}
+                  <div className="flex items-center space-x-2 flex-shrink-0">
                     <ThemeToggle />
                     <button
                       onClick={onToggleMaximize}
@@ -325,7 +357,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
 
                 {/* Messages area */}
-                <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative">
+                <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-[#212121] relative" style={{ scrollbarGutter: 'stable' }}>
                   {/* Error Message Container */}
                   <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-sm text-red-600 dark:text-red-300">
@@ -363,7 +395,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
 
                 {/* Chat Input */}
-                <div className="bg-white dark:bg-[#212121]">
+                <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                   <ChatInput onSendMessage={onSendMessage} />
                 </div>
               </>

@@ -80,7 +80,7 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="absolute left-0 top-0 h-full shadow-xl z-10 w-80 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-600 flex flex-col"
+            className="h-full w-full bg-white dark:bg-[#212121] flex flex-col"
             variants={panelVariants}
             initial="closed"
             animate="open"
