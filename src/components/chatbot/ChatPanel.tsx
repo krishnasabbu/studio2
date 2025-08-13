@@ -194,7 +194,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 {/* Center Chat Area */}
                 <div className="flex-1 flex flex-col max-w-4xl mx-auto">
                   {/* Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
+                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121] w-full">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-semibold text-sm">AI</span>
@@ -205,7 +205,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 ml-auto">
                       <ThemeToggle />
                       <button
                         onClick={onToggleMaximize}
@@ -263,7 +263,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   </div>
 
                   {/* Chat Input */}
-                  <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
+                  <div className="bg-white dark:bg-[#212121]">
                     <ChatInput onSendMessage={onSendMessage} />
                   </div>
                 </div>
@@ -363,7 +363,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
 
                 {/* Chat Input */}
-                <div className="border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-[#212121]">
+                <div className="bg-white dark:bg-[#212121]">
                   <ChatInput onSendMessage={onSendMessage} />
                 </div>
               </>
