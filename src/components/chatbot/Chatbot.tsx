@@ -78,7 +78,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
         type: 'text'
       };
       
-      setMessages([greetingMessage, sampleMessage]);
+      updateMessages([greetingMessage, sampleMessage]);
       setIsFirstVisit(false);
       } catch (error) {
         // Silently handle any initialization errors
@@ -104,7 +104,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
     if (!isOpen) {
       setIsNavOpen(false); // Close nav when opening chat
     }
-  }, []);
+  }, [isOpen]);
 
   const closeChat = useCallback(() => {
     setIsOpen(false);
@@ -134,21 +134,20 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
     } catch (error) {
       // Silently handle new chat errors
     }
+  }, [saveCurrentChat, messages, createNewChat]);
 
   const handleSelectChat = useCallback((chatId: string) => {
     try {
       const session = chatSessions.find(s => s.id === chatId);
       if (session) {
-        setCurrentChatId(chatId);
-        setMessages(session.messages);
-        updateMessages([greetingMessage, sampleMessage]);
+        selectChat(chatId);
         setIsFirstVisit(false);
         setIsNavOpen(false);
       }
     } catch (error) {
       // Silently handle chat selection errors
     }
-  }, [chatSessions]);
+  }, [chatSessions, selectChat]);
 
   const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
@@ -163,7 +162,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
         attachments: attachments
       };
 
-      setMessages(prev => [...prev, userMessage]);
+      updateMessages([...messages, userMessage]);
 
       // Simulate bot response after a delay
       setTimeout(() => {
@@ -175,7 +174,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
             timestamp: new Date()
           };
           
-          setMessages(prev => [...prev, botResponse]);
+          updateMessages(prev => [...prev, botResponse]);
         } catch (error) {
           // Silently handle bot response errors
         }
@@ -183,7 +182,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
     } catch (error) {
       // Silently handle message sending errors
     }
-  }, []);
+  }, [messages, updateMessages]);
 
   const handleTemplateOnboard = useCallback(() => {
     try {
@@ -219,14 +218,14 @@ Let me know which type of template you'd like to create:
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages(prev => [...prev, userMessage, botResponse]);
       
       // Call the optional callback
       onTemplateOnboard?.();
     } catch (error) {
       // Silently handle template onboard errors
     }
-  }, [onTemplateOnboard]);
+  }, [onTemplateOnboard, updateMessages]);
 
   const handleAlertOnboard = useCallback(() => {
     try {
@@ -275,14 +274,14 @@ Which type of alert would you like to configure first?`,
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, userMessage, botResponse]);
+      updateMessages(prev => [...prev, userMessage, botResponse]);
       
       // Call the optional callback
       onAlertOnboard?.();
     } catch (error) {
       // Silently handle alert onboard errors
     }
-  }, [messages, updateMessages, onAlertOnboard]);
+  }, [onAlertOnboard, updateMessages]);
 
   return (
     <div className={`chatbot-container ${className}`}>
