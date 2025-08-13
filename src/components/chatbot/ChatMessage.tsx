@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import mermaid from 'mermaid';
 import MessageActions from './MessageActions';
+import CodeBlock from './CodeBlock';
 import { Message, FileAttachment } from './types';
 
 interface ChatMessageProps {
@@ -82,20 +81,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   onSpeak 
 }) => {
   const isBot = message.sender === 'bot';
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
 
   return (
-    <div className={`w-full mb-6 ${isBot ? '' : 'flex justify-end'}`}>
-      <div className={`max-w-4xl w-full ${isBot ? 'group' : ''}`}>
+    <div className={`w-full mb-3 ${isBot ? '' : 'flex justify-end'}`}>
+      <div className={`max-w-4xl w-full ${isBot ? 'group' : 'max-w-2xl'}`}>
         {/* Message content */}
         <div className={`${
           isBot 
-            ? 'bg-transparent text-gray-800 dark:text-gray-200' 
-            : 'bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3 ml-auto max-w-2xl'
+            ? 'bg-transparent text-gray-800 dark:text-gray-200 py-2' 
+            : 'bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-3 ml-auto text-gray-900 dark:text-gray-100'
         }`}>
-          <div className="prose prose-sm max-w-none dark:prose-invert">
+          <div className={`prose prose-sm max-w-none dark:prose-invert ${isBot ? 'prose-gray' : ''}`}>
             <ReactMarkdown
               components={{
                 code({ node, inline, className, children, ...props }) {
@@ -108,15 +104,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   }
                   
                   return !inline && match ? (
-                    <SyntaxHighlighter
-                      style={tomorrow}
-                      language={language}
-                      PreTag="div"
-                      className="rounded-md text-sm !mt-2 !mb-2"
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
+                    <CodeBlock language={language} {...props}>{String(children)}</CodeBlock>
                   ) : (
                     <code className={`${className} bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1 py-0.5 rounded text-xs`} {...props}>
                       {children}
@@ -132,9 +120,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     {children}
                   </blockquote>
                 ),
-                h1: ({ children }) => <h1 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-lg font-bold mb-3 text-gray-900 dark:text-gray-100">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-base font-bold mb-2 text-gray-900 dark:text-gray-100">{children}</h3>,
+                h1: ({ children }) => <h1 className="text-xl font-bold mb-2 mt-4 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h1>,
+                h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h2>,
+                h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h3>,
                 strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-gray-100">{children}</strong>,
                 em: ({ children }) => <em className="italic">{children}</em>,
                 a: ({ children, href }) => (
@@ -155,7 +143,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           
           {/* File Attachments */}
           {message.attachments && message.attachments.length > 0 && (
-            <div className="mt-3 space-y-2">
+            <div className="mt-2 space-y-2">
               {message.attachments.map((attachment) => (
                 <FilePreview key={attachment.id} attachment={attachment} />
               ))}

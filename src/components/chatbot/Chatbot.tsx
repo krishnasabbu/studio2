@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ChatbotLauncher from './ChatbotLauncher';
 import ChatPanel from './ChatPanel';
-import { Message, ChatbotProps, ChatPanelState, FileAttachment } from './types';
+import NavigationPanel from './NavigationPanel';
+import { Message, ChatbotProps, ChatPanelState, FileAttachment, ChatSession } from './types';
 
 const Chatbot: React.FC<ChatbotProps> = ({
   className = '',
@@ -15,6 +16,9 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const [panelState, setPanelState] = useState<ChatPanelState>('closed');
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<string>('default');
 
   // Initialize greeting message on first visit
   useEffect(() => {
@@ -31,7 +35,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
       // Add sample message with Mermaid and Python code
       const sampleMessage: Message = {
         id: 'sample-' + Date.now(),
-        content: `Here's a sample response with code and diagrams:
+        content: `Here's a sample response demonstrating code rendering and diagrams:
 
 ## Python Fibonacci Function
 
@@ -41,7 +45,7 @@ def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n-1) + fibonacci(n-2)
-
+    
 # Example usage
 for i in range(10):
     print(f"fibonacci({i}) = {fibonacci(i)}")
@@ -59,7 +63,7 @@ graph TD
     F --> G[End]
 \`\`\`
 
-This demonstrates the recursive nature of the Fibonacci algorithm. The function calls itself with smaller values until it reaches the base case.`,
+This demonstrates **code syntax highlighting** and **Mermaid diagram rendering** within the chat interface. The copy button appears when you hover over code blocks.`,
         sender: 'bot',
         timestamp: new Date(),
         type: 'text'
@@ -88,11 +92,15 @@ This demonstrates the recursive nature of the Fibonacci algorithm. The function 
 
   const toggleChat = useCallback(() => {
     setIsOpen(prev => !prev);
+    if (!isOpen) {
+      setIsNavOpen(false); // Close nav when opening chat
+    }
   }, []);
 
   const closeChat = useCallback(() => {
     setIsOpen(false);
     setIsMaximized(false);
+    setIsNavOpen(false);
   }, []);
 
   const toggleMaximize = useCallback(() => {
@@ -102,6 +110,50 @@ This demonstrates the recursive nature of the Fibonacci algorithm. The function 
       setIsMaximized(prev => !prev);
     }
   }, [externalToggleMaximize]);
+
+  const toggleNavigation = useCallback(() => {
+    setIsNavOpen(prev => !prev);
+  }, []);
+
+  const handleNewChat = useCallback(() => {
+    try {
+      // Save current chat session if it has messages
+      if (messages.length > 1) { // More than just greeting
+        const newSession: ChatSession = {
+          id: currentChatId,
+          title: messages[1]?.content.slice(0, 50) + '...' || 'New Chat',
+          timestamp: new Date(),
+          preview: messages[1]?.content.slice(0, 100) + '...' || '',
+          messages: [...messages]
+        };
+        
+        setChatSessions(prev => [newSession, ...prev]);
+      }
+
+      // Start new chat
+      const newChatId = 'chat-' + Date.now();
+      setCurrentChatId(newChatId);
+      setMessages([]);
+      setIsFirstVisit(true);
+      setIsNavOpen(false);
+    } catch (error) {
+      // Silently handle new chat errors
+    }
+  }, [messages, currentChatId]);
+
+  const handleSelectChat = useCallback((chatId: string) => {
+    try {
+      const session = chatSessions.find(s => s.id === chatId);
+      if (session) {
+        setCurrentChatId(chatId);
+        setMessages(session.messages);
+        setIsFirstVisit(false);
+        setIsNavOpen(false);
+      }
+    } catch (error) {
+      // Silently handle chat selection errors
+    }
+  }, [chatSessions]);
 
   const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
@@ -239,6 +291,15 @@ Which type of alert would you like to configure first?`,
 
   return (
     <div className={`chatbot-container ${className}`}>
+      <NavigationPanel
+        isOpen={isNavOpen}
+        onToggle={toggleNavigation}
+        onNewChat={handleNewChat}
+        chatSessions={chatSessions}
+        currentChatId={currentChatId}
+        onSelectChat={handleSelectChat}
+      />
+      
       <ChatbotLauncher
         isOpen={isOpen}
         onClick={toggleChat}

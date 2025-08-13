@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minimize2, Maximize2 } from 'lucide-react';
+import { X, Maximize2 } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ActionButtons from './ActionButtons';
+import ThemeToggle from './ThemeToggle';
 import { Message, ChatPanelState, FileAttachment } from './types';
 
 interface ChatPanelProps {
@@ -150,10 +151,17 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             ref={panelRef}
             className={`fixed bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden ${
               isMaximized
-                ? 'inset-4 w-auto h-auto'
+                ? ''
                 : 'bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] lg:max-w-lg xl:w-[580px]'
             }`}
-            style={isMaximized ? { width: '90vw', height: '90vh', top: '5vh', left: '5vw', right: 'auto', bottom: 'auto' } : {}}
+            style={isMaximized ? { 
+              width: '90vw', 
+              height: '90vh', 
+              top: '5vh', 
+              left: '5vw', 
+              right: 'auto', 
+              bottom: 'auto' 
+            } : {}}
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -164,37 +172,38 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             aria-modal="true"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-primary-50 to-primary-100">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">AI</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Assistant</h3>
-                  <p className="text-xs text-gray-600">Always here to help</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">Assistant</h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Always here to help</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-2">
+                <ThemeToggle />
                 <button
                   onClick={onToggleMaximize}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
                   aria-label={isMaximized ? "Restore chat size" : "Maximize chat"}
                 >
-                  <Maximize2 className="w-4 h-4 text-gray-600" />
+                  <Maximize2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
                   aria-label="Close chat"
                 >
-                  <X className="w-4 h-4 text-gray-600" />
+                  <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-white">
+            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800">
               {messages.map((message) => (
                 <ChatMessage 
                   key={message.id} 
@@ -225,7 +234,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Chat Input */}
-            <div className="border-t border-gray-200">
+            <div className="border-t border-gray-200 dark:border-gray-700">
               <ChatInput onSendMessage={onSendMessage} />
             </div>
           </motion.div>

@@ -23,6 +23,14 @@ export interface ChatbotProps {
   onToggleMaximize?: () => void;
 }
 
+export interface ChatSession {
+  id: string;
+  title: string;
+  timestamp: Date;
+  preview: string;
+  messages: Message[];
+}
+
 export interface ActionButtonsProps {
   onTemplateOnboard: () => void;
   onAlertOnboard: () => void;

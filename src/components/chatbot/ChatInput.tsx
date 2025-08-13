@@ -173,10 +173,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
   };
 
   return (
-    <div className="p-4 border-t border-gray-200 bg-white">
+    <div className="p-4 bg-white dark:bg-gray-800">
       {/* Voice Recognition Error */}
       {voiceState.error && (
-        <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="mb-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
           {voiceState.error}
         </div>
       )}
@@ -187,25 +187,25 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
           {attachments.map((attachment) => (
             <div
               key={attachment.id}
-              className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm"
+              className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-sm"
             >
               <div className="flex items-center space-x-2 flex-1 min-w-0">
                 {getFileIcon(attachment.type)}
                 <div className="flex-1 min-w-0">
-                  <div className="truncate font-medium text-gray-900">
+                  <div className="truncate font-medium text-gray-900 dark:text-gray-100">
                     {attachment.name}
                   </div>
-                  <div className="text-gray-500 text-xs">
+                  <div className="text-gray-500 dark:text-gray-400 text-xs">
                     {formatFileSize(attachment.size)}
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => removeAttachment(attachment.id)}
-                className="p-1 hover:bg-gray-200 rounded transition-colors"
+                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                 aria-label={`Remove ${attachment.name}`}
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
           ))}
@@ -228,7 +228,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Attach file"
         >
           <Paperclip className="w-5 h-5" />
@@ -241,8 +241,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
             disabled={disabled}
             className={`p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed ${
               voiceState.isListening
-                ? 'bg-red-500 text-white hover:bg-red-600'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                ? 'bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
             aria-label={voiceState.isListening ? 'Stop recording' : 'Start voice input'}
           >
@@ -271,10 +271,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
           
           {/* Voice Recording Indicator */}
           {voiceState.isListening && (
-            <div className="absolute top-2 right-2">
+            <div className="absolute top-2 right-2 z-10">
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-red-600 font-medium">Recording</span>
+                <span className="text-xs text-red-600 dark:text-red-400 font-medium">Recording</span>
               </div>
             </div>
           )}
@@ -284,7 +284,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
         <button
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0)}
-          className="bg-primary-500 hover:bg-primary-600 text-white rounded-lg p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white rounded-lg p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Send message"
         >
           <Send className="w-5 h-5" />
