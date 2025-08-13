@@ -66,6 +66,12 @@ export const useChatHistory = () => {
   }, [currentChatId, chatSessions]);
 
   const saveCurrentChat = useCallback((chatMessages: Message[]) => {
+    // Runtime check to ensure chatMessages is an array
+    if (!Array.isArray(chatMessages)) {
+      console.error('saveCurrentChat: chatMessages is not an array:', chatMessages);
+      return;
+    }
+    
     if (chatMessages.length === 0) return;
 
     const title = chatMessages.find(msg => msg.sender === 'user')?.content.slice(0, 50) + '...' || 'New Chat';
