@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Maximize2 } from 'lucide-react';
+import { X, Maximize2, Menu } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ActionButtons from './ActionButtons';
 import ThemeToggle from './ThemeToggle';
+import NavigationPanel from './NavigationPanel';
 import { Message, ChatPanelState, FileAttachment } from './types';
 
 interface ChatPanelProps {
@@ -17,6 +18,12 @@ interface ChatPanelProps {
   onTemplateOnboard: () => void;
   onAlertOnboard: () => void;
   panelState: ChatPanelState;
+  isNavOpen: boolean;
+  toggleNavigation: () => void;
+  onNewChat: () => void;
+  chatSessions: any[];
+  currentChatId?: string;
+  onSelectChat: (chatId: string) => void;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({
@@ -28,7 +35,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   onSendMessage,
   onTemplateOnboard,
   onAlertOnboard,
-  panelState
+  panelState,
+  isNavOpen,
+  toggleNavigation,
+  onNewChat,
+  chatSessions,
+  currentChatId,
+  onSelectChat
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -171,9 +184,27 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             aria-label="Chat assistant"
             aria-modal="true"
           >
+            {/* Navigation Panel - Inside Chat Container */}
+            <NavigationPanel
+              isOpen={isNavOpen}
+              onToggle={toggleNavigation}
+              onNewChat={onNewChat}
+              chatSessions={chatSessions}
+              currentChatId={currentChatId}
+              onSelectChat={onSelectChat}
+            />
+
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-800">
               <div className="flex items-center space-x-3">
+                {/* Navigation Toggle Button */}
+                <button
+                  onClick={toggleNavigation}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="Toggle navigation panel"
+                >
+                  <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                </button>
                 <div className="w-10 h-10 bg-primary-500 dark:bg-primary-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">AI</span>
                 </div>
@@ -203,7 +234,14 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800">
+            <div className="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 relative">
+              {/* Error Message Container */}
+              <div id="chat-error-container" className="hidden absolute top-4 left-4 right-4 z-10">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600 dark:text-red-400">
+                  <span id="chat-error-message"></span>
+                </div>
+              </div>
+              
               {messages.map((message) => (
                 <ChatMessage 
                   key={message.id} 

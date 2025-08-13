@@ -291,15 +291,6 @@ Which type of alert would you like to configure first?`,
 
   return (
     <div className={`chatbot-container ${className}`}>
-      <NavigationPanel
-        isOpen={isNavOpen}
-        onToggle={toggleNavigation}
-        onNewChat={handleNewChat}
-        chatSessions={chatSessions}
-        currentChatId={currentChatId}
-        onSelectChat={handleSelectChat}
-      />
-      
       <ChatbotLauncher
         isOpen={isOpen}
         onClick={toggleChat}
@@ -316,6 +307,12 @@ Which type of alert would you like to configure first?`,
         onTemplateOnboard={handleTemplateOnboard}
         onAlertOnboard={handleAlertOnboard}
         panelState={panelState}
+        isNavOpen={isNavOpen}
+        toggleNavigation={toggleNavigation}
+        onNewChat={handleNewChat}
+        chatSessions={chatSessions}
+        currentChatId={currentChatId}
+        onSelectChat={handleSelectChat}
       />
     </div>
   );

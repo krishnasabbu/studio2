@@ -30,7 +30,7 @@ const MessageActions: React.FC<MessageActionsProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    <div className="flex items-center space-x-2 mt-2 opacity-100 transition-opacity duration-200">
       <button
         onClick={handleCopy}
         className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"

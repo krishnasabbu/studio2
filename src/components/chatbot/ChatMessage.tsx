@@ -47,18 +47,43 @@ const MermaidDiagram: React.FC<{ chart: string }> = ({ chart }) => {
     if (elementRef.current) {
       const renderChart = async () => {
         try {
+          // Clear any previous content
+          if (elementRef.current) {
+            elementRef.current.innerHTML = '';
+          }
+          
+          // Initialize Mermaid with proper configuration
           mermaid.initialize({ 
             startOnLoad: false,
-            theme: 'default',
+            theme: 'neutral',
             securityLevel: 'loose',
+            fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+            fontSize: 14,
+            flowchart: {
+              useMaxWidth: true,
+              htmlLabels: true
+            }
           });
           
-          const { svg } = await mermaid.render(`mermaid-${Date.now()}`, chart);
+          // Generate unique ID for each diagram
+          const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          
+          // Render the diagram
+          const { svg } = await mermaid.render(diagramId, chart);
+          
           if (elementRef.current) {
             elementRef.current.innerHTML = svg;
+            
+            // Apply responsive styling to the SVG
+            const svgElement = elementRef.current.querySelector('svg');
+            if (svgElement) {
+              svgElement.style.maxWidth = '100%';
+              svgElement.style.height = 'auto';
+            }
           }
         } catch (error) {
-          // Silently handle Mermaid errors - don't render anything
+          // Silently handle Mermaid errors - render nothing
+          console.warn('Mermaid rendering failed:', error);
           if (elementRef.current) {
             elementRef.current.innerHTML = '';
           }
@@ -69,7 +94,12 @@ const MermaidDiagram: React.FC<{ chart: string }> = ({ chart }) => {
     }
   }, [chart]);
 
-  return <div ref={elementRef} className="my-4 flex justify-center" />;
+  return (
+    <div 
+      ref={elementRef} 
+      className="my-4 flex justify-center overflow-x-auto bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700" 
+    />
+  );
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -84,7 +114,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   return (
     <div className={`w-full mb-3 ${isBot ? '' : 'flex justify-end'}`}>
-      <div className={`max-w-4xl w-full ${isBot ? 'group' : 'max-w-2xl'}`}>
+      <div className={`max-w-4xl w-full ${isBot ? '' : 'max-w-2xl'}`}>
         {/* Message content */}
         <div className={`${
           isBot 

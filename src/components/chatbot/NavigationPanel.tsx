@@ -80,7 +80,7 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-50 flex flex-col shadow-xl"
+            className="absolute left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-10 flex flex-col shadow-xl"
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -155,15 +155,6 @@ const NavigationPanel: React.FC<NavigationPanelProps> = ({
       </AnimatePresence>
 
       {/* Toggle Button (when panel is closed) */}
-      {!isOpen && (
-        <button
-          onClick={onToggle}
-          className="fixed top-4 left-4 z-30 p-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-          aria-label="Open navigation panel"
-        >
-          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-        </button>
-      )}
     </>
   );
 };
