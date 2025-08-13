@@ -4,6 +4,15 @@ export interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
   type?: 'text' | 'action-buttons';
+  attachments?: FileAttachment[];
+}
+
+export interface FileAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url?: string;
 }
 
 export interface ChatbotProps {
@@ -18,3 +27,10 @@ export interface ActionButtonsProps {
 }
 
 export type ChatPanelState = 'closed' | 'opening' | 'open' | 'closing';
+
+export interface VoiceRecognitionState {
+  isListening: boolean;
+  isSupported: boolean;
+  transcript: string;
+  error: string | null;
+}

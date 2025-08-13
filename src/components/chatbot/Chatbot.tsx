@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ChatbotLauncher from './ChatbotLauncher';
 import ChatPanel from './ChatPanel';
-import { Message, ChatbotProps, ChatPanelState } from './types';
+import { Message, ChatbotProps, ChatPanelState, FileAttachment } from './types';
 
 const Chatbot: React.FC<ChatbotProps> = ({
   className = '',
@@ -48,6 +48,33 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
   const closeChat = useCallback(() => {
     setIsOpen(false);
+  }, []);
+
+  const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
+    if (!content.trim() && (!attachments || attachments.length === 0)) return;
+
+    // Add user message
+    const userMessage: Message = {
+      id: 'user-' + Date.now(),
+      content: content || '📎 File attachment',
+      sender: 'user',
+      timestamp: new Date(),
+      attachments: attachments
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    // Simulate bot response after a delay
+    setTimeout(() => {
+      const botResponse: Message = {
+        id: 'bot-' + Date.now(),
+        content: `Thanks for your message! ${attachments && attachments.length > 0 ? `I can see you've shared ${attachments.length} file(s). ` : ''}How can I help you further?`,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botResponse]);
+    }, 1000);
   }, []);
 
   const handleTemplateOnboard = useCallback(() => {
@@ -153,6 +180,7 @@ Which type of alert would you like to configure first?`,
         isOpen={isOpen}
         onClose={closeChat}
         messages={messages}
+        onSendMessage={handleSendMessage}
         onTemplateOnboard={handleTemplateOnboard}
         onAlertOnboard={handleAlertOnboard}
         panelState={panelState}

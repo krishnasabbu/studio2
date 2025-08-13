@@ -3,11 +3,37 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Bot, User } from 'lucide-react';
-import { Message } from './types';
+import { Message, FileAttachment } from './types';
 
 interface ChatMessageProps {
   message: Message;
 }
+
+const FilePreview: React.FC<{ attachment: FileAttachment }> = ({ attachment }) => {
+  const isImage = attachment.type.startsWith('image/');
+  
+  if (isImage && attachment.url) {
+    return (
+      <div className="mt-2">
+        <img
+          src={attachment.url}
+          alt={attachment.name}
+          className="max-w-xs rounded-lg shadow-sm border border-gray-200"
+          style={{ maxHeight: '200px' }}
+        />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+      <div className="font-medium text-gray-900">{attachment.name}</div>
+      <div className="text-gray-500 text-xs">
+        {(attachment.size / 1024).toFixed(1)} KB
+      </div>
+    </div>
+  );
+};
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isBot = message.sender === 'bot';
@@ -89,6 +115,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               {message.content}
             </ReactMarkdown>
           </div>
+          
+          {/* File Attachments */}
+          {message.attachments && message.attachments.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {message.attachments.map((attachment) => (
+                <FilePreview key={attachment.id} attachment={attachment} />
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Timestamp */}

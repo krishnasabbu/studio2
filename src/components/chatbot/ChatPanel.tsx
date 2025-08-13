@@ -2,13 +2,15 @@ import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minimize2 } from 'lucide-react';
 import ChatMessage from './ChatMessage';
+import ChatInput from './ChatInput';
 import ActionButtons from './ActionButtons';
-import { Message, ChatPanelState } from './types';
+import { Message, ChatPanelState, FileAttachment } from './types';
 
 interface ChatPanelProps {
   isOpen: boolean;
   onClose: () => void;
   messages: Message[];
+  onSendMessage: (message: string, attachments?: FileAttachment[]) => void;
   onTemplateOnboard: () => void;
   onAlertOnboard: () => void;
   panelState: ChatPanelState;
@@ -18,6 +20,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   isOpen,
   onClose,
   messages,
+  onSendMessage,
   onTemplateOnboard,
   onAlertOnboard,
   panelState
@@ -100,7 +103,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           {/* Chat panel */}
           <motion.div
             ref={panelRef}
-            className="fixed bottom-4 right-4 w-full max-w-sm md:w-96 h-[600px] max-h-[80vh] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden md:max-w-md lg:max-w-lg"
+            className="fixed bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden lg:max-w-lg xl:w-[580px]"
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -163,23 +166,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area placeholder */}
-            <div className="p-4 border-t border-gray-200 bg-white">
-              <div className="flex items-center space-x-2">
-                <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-gray-500 text-sm">
-                  Type your message...
-                </div>
-                <button
-                  className="bg-primary-500 hover:bg-primary-600 text-white rounded-full p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  disabled
-                  aria-label="Send message (coming soon)"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            {/* Chat Input */}
+            <ChatInput onSendMessage={onSendMessage} />
           </motion.div>
         </>
       )}
