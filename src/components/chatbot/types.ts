@@ -19,6 +19,8 @@ export interface ChatbotProps {
   className?: string;
   onTemplateOnboard?: () => void;
   onAlertOnboard?: () => void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export interface ActionButtonsProps {
@@ -33,4 +35,13 @@ export interface VoiceRecognitionState {
   isSupported: boolean;
   transcript: string;
   error: string | null;
+}
+
+export interface MessageActionsProps {
+  message: Message;
+  onCopy: (content: string) => void;
+  onDownload: (content: string) => void;
+  onThumbsUp: (messageId: string) => void;
+  onThumbsDown: (messageId: string) => void;
+  onSpeak: (content: string) => void;
 }

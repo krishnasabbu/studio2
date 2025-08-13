@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minimize2 } from 'lucide-react';
+import { X, Minimize2, Maximize2 } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ActionButtons from './ActionButtons';
@@ -8,7 +8,9 @@ import { Message, ChatPanelState, FileAttachment } from './types';
 
 interface ChatPanelProps {
   isOpen: boolean;
+  isMaximized: boolean;
   onClose: () => void;
+  onToggleMaximize: () => void;
   messages: Message[];
   onSendMessage: (message: string, attachments?: FileAttachment[]) => void;
   onTemplateOnboard: () => void;
@@ -18,7 +20,9 @@ interface ChatPanelProps {
 
 const ChatPanel: React.FC<ChatPanelProps> = ({
   isOpen,
+  isMaximized,
   onClose,
+  onToggleMaximize,
   messages,
   onSendMessage,
   onTemplateOnboard,
@@ -78,6 +82,47 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     }
   };
 
+  // Message action handlers
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      console.log('Message copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy message:', err);
+    }
+  };
+
+  const handleDownload = (content: string) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `message-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleThumbsUp = (messageId: string) => {
+    console.log('Thumbs up for message:', messageId);
+  };
+
+  const handleThumbsDown = (messageId: string) => {
+    console.log('Thumbs down for message:', messageId);
+  };
+
+  const handleSpeak = (content: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(content);
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      speechSynthesis.speak(utterance);
+    } else {
+      console.log('Text-to-speech not supported');
+    }
+  };
+
   const backdropVariants = {
     closed: { opacity: 0 },
     open: { opacity: 1 }
@@ -103,7 +148,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           {/* Chat panel */}
           <motion.div
             ref={panelRef}
-            className="fixed bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden lg:max-w-lg xl:w-[580px]"
+            className={`fixed bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden ${
+              isMaximized
+                ? 'inset-4 w-auto h-auto'
+                : 'bottom-4 right-4 w-full max-w-md md:w-[520px] h-[780px] max-h-[85vh] lg:max-w-lg xl:w-[580px]'
+            }`}
+            style={isMaximized ? { width: '75vw', height: '75vh', top: '12.5vh', left: '12.5vw', right: 'auto', bottom: 'auto' } : {}}
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -127,6 +177,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               
               <div className="flex items-center space-x-2">
                 <button
+                  onClick={onToggleMaximize}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label={isMaximized ? "Restore chat size" : "Maximize chat"}
+                >
+                  <Maximize2 className="w-4 h-4 text-gray-600" />
+                </button>
+                <button
                   onClick={onClose}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
                   aria-label="Minimize chat"
@@ -144,9 +201,17 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-6 bg-white">
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage 
+                  key={message.id} 
+                  message={message}
+                  onCopy={handleCopy}
+                  onDownload={handleDownload}
+                  onThumbsUp={handleThumbsUp}
+                  onThumbsDown={handleThumbsDown}
+                  onSpeak={handleSpeak}
+                />
               ))}
               
               {/* Action buttons after greeting */}
@@ -167,7 +232,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             </div>
 
             {/* Chat Input */}
-            <ChatInput onSendMessage={onSendMessage} />
+            <div className="border-t border-gray-200">
+              <ChatInput onSendMessage={onSendMessage} />
+            </div>
           </motion.div>
         </>
       )}

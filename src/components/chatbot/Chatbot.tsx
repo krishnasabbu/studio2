@@ -6,9 +6,12 @@ import { Message, ChatbotProps, ChatPanelState, FileAttachment } from './types';
 const Chatbot: React.FC<ChatbotProps> = ({
   className = '',
   onTemplateOnboard,
-  onAlertOnboard
+  onAlertOnboard,
+  isMaximized: externalMaximized,
+  onToggleMaximize: externalToggleMaximize
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const [panelState, setPanelState] = useState<ChatPanelState>('closed');
@@ -23,8 +26,45 @@ const Chatbot: React.FC<ChatbotProps> = ({
         timestamp: new Date(),
         type: 'text'
       };
+
+      // Add sample message with Mermaid and Python code
+      const sampleMessage: Message = {
+        id: 'sample-' + Date.now(),
+        content: `Here's a sample response with code and diagrams:
+
+## Python Fibonacci Function
+
+\`\`\`python
+# Sample Python function
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Example usage
+for i in range(10):
+    print(f"fibonacci({i}) = {fibonacci(i)}")
+\`\`\`
+
+## Process Flow Diagram
+
+\`\`\`mermaid
+graph TD
+    A[Start] --> B[Input n]
+    B --> C{n <= 1?}
+    C -->|Yes| D[Return n]
+    C -->|No| E[Calculate fibonacci(n-1) + fibonacci(n-2)]
+    E --> F[Return result]
+    F --> G[End]
+\`\`\`
+
+This demonstrates the recursive nature of the Fibonacci algorithm. The function calls itself with smaller values until it reaches the base case.`,
+        sender: 'bot',
+        timestamp: new Date(),
+        type: 'text'
+      };
       
-      setMessages([greetingMessage]);
+      setMessages([greetingMessage, sampleMessage]);
       setIsFirstVisit(false);
     }
   }, [isOpen, isFirstVisit, messages.length]);
@@ -48,7 +88,16 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
   const closeChat = useCallback(() => {
     setIsOpen(false);
+    setIsMaximized(false);
   }, []);
+
+  const toggleMaximize = useCallback(() => {
+    if (externalToggleMaximize) {
+      externalToggleMaximize();
+    } else {
+      setIsMaximized(prev => !prev);
+    }
+  }, [externalToggleMaximize]);
 
   const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
@@ -178,7 +227,9 @@ Which type of alert would you like to configure first?`,
       
       <ChatPanel
         isOpen={isOpen}
+        isMaximized={externalMaximized ?? isMaximized}
         onClose={closeChat}
+        onToggleMaximize={toggleMaximize}
         messages={messages}
         onSendMessage={handleSendMessage}
         onTemplateOnboard={handleTemplateOnboard}
