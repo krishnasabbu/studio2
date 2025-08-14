@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Send, Mic, MicOff, Plus, X, Code, Camera, MapPin, Calendar } from 'lucide-react';
+import { Send, Mic, MicOff, Plus, X, Code, Camera, MapPin, Calendar, Paperclip } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileAttachment, VoiceRecognitionState } from './types';
 
@@ -72,6 +72,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
   const [message, setMessage] = useState('');
   const [selectedIntent, setSelectedIntent] = useState<Intent | null>(null);
   const [showIntentPopup, setShowIntentPopup] = useState(false);
+  const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [voiceState, setVoiceState] = useState<VoiceRecognitionState>({
     isListening: false,
     isSupported: false,
@@ -82,6 +83,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
   const recognitionRef = useRef<any>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const plusButtonRef = useRef<HTMLButtonElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Initialize speech recognition
@@ -161,13 +163,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
 
   const handleSend = useCallback(() => {
     if (message.trim()) {
-      onSendMessage(message.trim(), [], selectedIntent || undefined);
+      onSendMessage(message.trim(), attachments, selectedIntent || undefined);
       setMessage('');
+      setAttachments([]);
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
     }
-  }, [message, selectedIntent, onSendMessage]);
+  }, [message, attachments, selectedIntent, onSendMessage]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -220,6 +223,40 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
       recognitionRef.current?.start();
     }
   }, [voiceState.isListening, voiceState.isSupported]);
+
+  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newAttachments: FileAttachment[] = Array.from(files).map(file => ({
+      id: `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file)
+    }));
+
+    setAttachments(prev => [...prev, ...newAttachments]);
+    
+    // Reset file input
+    if (event.target) {
+      event.target.value = '';
+    }
+  }, []);
+
+  const removeAttachment = useCallback((attachmentId: string) => {
+    setAttachments(prev => {
+      const attachment = prev.find(a => a.id === attachmentId);
+      if (attachment?.url) {
+        URL.revokeObjectURL(attachment.url);
+      }
+      return prev.filter(a => a.id !== attachmentId);
+    });
+  }, []);
+
+  const triggerFileSelect = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   const isExpanded = selectedIntent !== null;
 
@@ -279,6 +316,30 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
         {voiceState.error && (
           <div className="mb-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-sm text-red-600 dark:text-red-300">
             {voiceState.error}
+          </div>
+        )}
+
+        {/* File Attachments Preview */}
+        {attachments.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {attachments.map((attachment) => (
+              <div
+                key={attachment.id}
+                className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm"
+              >
+                <Paperclip className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-700 dark:text-gray-300 truncate max-w-32">
+                  {attachment.name}
+                </span>
+                <button
+                  onClick={() => removeAttachment(attachment.id)}
+                  className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                  aria-label={`Remove ${attachment.name}`}
+                >
+                  <X className="w-3 h-3 text-gray-500" />
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
@@ -352,6 +413,47 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
                 <Plus className="w-4 h-4" />
               </motion.div>
             </button>
+
+            {/* Voice Recording Button */}
+            <button
+              onClick={toggleVoiceRecognition}
+              disabled={disabled}
+              className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                voiceState.isListening
+                  ? 'bg-red-500 text-white'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+              aria-label={voiceState.isListening ? 'Stop recording' : 'Start voice recording'}
+              title={voiceState.isListening ? 'Stop recording' : 'Start voice recording'}
+            >
+              {voiceState.isListening ? (
+                <MicOff className="w-4 h-4" />
+              ) : (
+                <Mic className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* File Attachment Button */}
+            <button
+              onClick={triggerFileSelect}
+              disabled={disabled}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Attach file"
+              title="Attach file"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
+
+            {/* Hidden File Input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+              accept="*/*"
+              aria-label="File input"
+            />
 
             {/* Text Input */}
             <div className="flex-1 relative">
