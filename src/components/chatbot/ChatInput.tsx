@@ -466,12 +466,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
                 disabled={disabled || voiceState.isListening}
                 className={`w-full px-3 py-2 border-0 rounded-lg resize-none focus:outline-none transition-all duration-200 disabled:cursor-not-allowed text-base bg-transparent ${
                   voiceState.isListening ? 'bg-red-50 dark:bg-red-900/20' : ''
-                } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 leading-normal whitespace-pre-wrap`}
                 rows={1}
                 style={{ 
                   minHeight: '32px',
                   maxHeight: '100px',
-                  height: 'auto'
+                  height: 'auto',
+                  lineHeight: '1.5',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
                 }}
               />
             </div>
