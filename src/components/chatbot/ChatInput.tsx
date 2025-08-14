@@ -384,7 +384,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
               <Send className="w-4 h-4" />
             </button>
           </div>
-        </div>
       </motion.div>
       </div>
     </div>
