@@ -14,7 +14,7 @@ interface ChatPanelProps {
   onClose: () => void;
   onToggleMaximize: () => void;
   messages: Message[];
-  onSendMessage: (message: string, attachments?: FileAttachment[]) => void;
+  onSendMessage: (message: string, attachments?: FileAttachment[], intent?: any) => void;
   onTemplateOnboard: () => void;
   onAlertOnboard: () => void;
   panelState: ChatPanelState;

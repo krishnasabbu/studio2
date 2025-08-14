@@ -167,7 +167,7 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
     }
   }, [chatSessions, selectChat, updateMessages]);
 
-  const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[]) => {
+  const handleSendMessage = useCallback((content: string, attachments?: FileAttachment[], intent?: any) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
 
     try {
@@ -185,9 +185,20 @@ This demonstrates **code syntax highlighting** and **Mermaid diagram rendering**
       // Simulate bot response after a delay
       setTimeout(() => {
         try {
+          // Determine response based on intent
+          let responseContent = `Thanks for your message! ${attachments && attachments.length > 0 ? `I can see you've shared ${attachments.length} file(s). ` : ''}`;
+          
+          if (intent) {
+            responseContent += `I see you're using the **${intent.name}** feature. `;
+            // In production, this would call the specific API endpoint: intent.endpoint
+            console.log(`Would call API endpoint: ${intent.endpoint}`);
+          }
+          
+          responseContent += 'How can I help you further?';
+          
           const botResponse: Message = {
             id: 'bot-' + Date.now(),
-            content: `Thanks for your message! ${attachments && attachments.length > 0 ? `I can see you've shared ${attachments.length} file(s). ` : ''}How can I help you further?`,
+            content: responseContent,
             sender: 'bot',
             timestamp: new Date()
           };

@@ -77,25 +77,12 @@
 }
 
 /* Input Box Icon Alignment */
-.chat-input-container {
+.chat-input-textarea {
+  min-height: 32px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.chat-input-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px; /* Match input height */
-  width: 40px;
-  flex-shrink: 0;
-}
-
-.chat-input-field {
-  min-height: 40px;
-  display: flex;
-  align-items: center;
+  resize: none;
+  overflow-y: auto;
 }
 
 /* Scroll to Bottom Button */
