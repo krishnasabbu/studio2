@@ -385,6 +385,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
             </button>
           </div>
         </div>
+      </motion.div>
       </div>
     </div>
   );
