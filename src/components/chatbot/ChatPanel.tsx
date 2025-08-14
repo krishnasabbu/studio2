@@ -15,6 +15,7 @@ interface ChatPanelProps {
   onToggleMaximize: () => void;
   messages: Message[];
   onSendMessage: (message: string, attachments?: FileAttachment[], intent?: any) => void;
+  onFeatureSelect?: (intent: any) => void;
   onTemplateOnboard: () => void;
   onAlertOnboard: () => void;
   panelState: ChatPanelState;
@@ -33,6 +34,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   onToggleMaximize,
   messages,
   onSendMessage,
+  onFeatureSelect,
   onTemplateOnboard,
   onAlertOnboard,
   panelState,
@@ -330,7 +332,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   {/* Chat Input */}
                   <div className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700">
                     <div className="max-w-4xl mx-auto">
-                      <ChatInput onSendMessage={onSendMessage} />
+                      <ChatInput onSendMessage={onSendMessage} onFeatureSelect={onFeatureSelect} />
                     </div>
                   </div>
                 </div>
@@ -448,7 +450,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
                 {/* Chat Input */}
                 <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                  <ChatInput onSendMessage={onSendMessage} />
+                  <ChatInput onSendMessage={onSendMessage} onFeatureSelect={onFeatureSelect} />
                 </div>
               </>
             )}

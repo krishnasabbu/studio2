@@ -23,12 +23,21 @@ export interface ChatbotProps {
   onToggleMaximize?: () => void;
 }
 
+export interface SessionContext {
+  sessionId: string;
+  featureId: string | null;
+  featureName: string | null;
+  isNewSession: boolean;
+  startedAt: Date;
+}
+
 export interface ChatSession {
   id: string;
   title: string;
   timestamp: Date;
   preview: string;
   messages: Message[];
+  sessionContext?: SessionContext;
 }
 
 export interface ActionButtonsProps {

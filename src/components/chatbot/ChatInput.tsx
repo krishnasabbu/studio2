@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Send, Mic, MicOff, Plus, X, Code, Camera, MapPin, Calendar, Paperclip } from 'lucide-react';
+import { Send, Mic, MicOff, Plus, X, Code, Camera, MapPin, Calendar, Paperclip, AlertTriangle, Mail, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileAttachment, VoiceRecognitionState } from './types';
 
@@ -14,6 +14,7 @@ interface Intent {
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: FileAttachment[], intent?: Intent) => void;
+  onFeatureSelect?: (intent: Intent) => void;
   disabled?: boolean;
 }
 
@@ -65,10 +66,34 @@ const AVAILABLE_INTENTS: Intent[] = [
     description: 'Schedule and calendar help',
     color: 'text-indigo-600',
     endpoint: '/api/schedule-chat'
+  },
+  {
+    id: 'alerts-studio',
+    name: 'Alerts Studio',
+    icon: AlertTriangle,
+    description: 'Alert configuration and management',
+    color: 'text-red-600',
+    endpoint: '/api/alerts-chat'
+  },
+  {
+    id: 'email-builder',
+    name: 'Email Builder',
+    icon: Mail,
+    description: 'Email template creation and editing',
+    color: 'text-blue-600',
+    endpoint: '/api/email-chat'
+  },
+  {
+    id: 'chatbot-builder',
+    name: 'Chatbot Builder',
+    icon: MessageSquare,
+    description: 'Chatbot configuration and training',
+    color: 'text-green-600',
+    endpoint: '/api/chatbot-chat'
   }
 ];
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFeatureSelect, disabled = false }) => {
   const [message, setMessage] = useState('');
   const [selectedIntent, setSelectedIntent] = useState<Intent | null>(null);
   const [showIntentPopup, setShowIntentPopup] = useState(false);
@@ -187,6 +212,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
     // Handle voice recording intent specially
     if (intent.id === 'voice-recording') {
       toggleVoiceRecognition();
+    } else if (['alerts-studio', 'email-builder', 'chatbot-builder'].includes(intent.id)) {
+      // These are feature selections that start new sessions
+      onFeatureSelect?.(intent);
+      setShowIntentPopup(false);
+      return;
     }
     
     setSelectedIntent(intent);
@@ -194,7 +224,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }
     
     // Focus back to textarea
     textareaRef.current?.focus();
-  }, []);
+  }, [onFeatureSelect]);
 
   const handleIntentDeselect = useCallback(() => {
     // Stop voice recording if active
