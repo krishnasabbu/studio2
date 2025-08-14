@@ -157,12 +157,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   return (
     <div className={`w-full mb-4 ${isBot ? '' : 'flex justify-end'}`}>
-      <div className={`${isBot ? 'max-w-none' : 'max-w-2xl'}`}>
+      <div className={`${isBot ? 'max-w-none' : 'max-w-2xl ml-auto'}`}>
         {/* Message content */}
         <div className={`${
           isBot 
             ? 'bg-transparent text-gray-800 dark:text-gray-200 py-2 w-full' 
-            : 'inline-block bg-[#f4f4f4] dark:bg-[#303030] rounded-2xl px-4 py-3 text-gray-900 dark:text-gray-100 max-w-[80%]'
+            : 'bg-[#f4f4f4] dark:bg-[#303030] rounded-2xl px-4 py-3 text-gray-900 dark:text-gray-100'
         }`}>
           <div className={`${isBot ? 'prose prose-sm max-w-none dark:prose-invert prose-gray' : ''}`}>
             <ReactMarkdown
